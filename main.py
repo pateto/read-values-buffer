@@ -2,6 +2,7 @@ from osgeo import gdal
 from pathlib import Path
 from Raster import Raster
 from Buffer import Buffer
+from Area import Area
 import os
 
 # PARAMETERS
@@ -13,7 +14,10 @@ center = (1085503.9991, 880144.4452)
 radius = 5000
 
 # Input directory
-input_dir = Path("C:\\Users\\Asus\\Desktop\\read-values-buffer\\AEROSOL_3K_TIF")
+input_dir = Path("AEROSOL_3K_TIF")
+
+# Influence area polygon
+area_path = "area\\area.shp"
 
 # Output file
 output_filename = "output.txt"
@@ -25,6 +29,9 @@ workspace = "tmp"
 if not os.path.exists(workspace):
     print("Creating directory", workspace)
     os.makedirs(workspace)
+
+# read influence area
+area = Area(area_path)
 
 # read files from directory
 files = [file for file in input_dir.rglob('*.tif')]    
@@ -44,7 +51,7 @@ for file in files:
     buffer = Buffer(center, radius)
     
     # Get AOD values
-    aod_str = buffer.get_inner_values(raster).strip()
+    aod_str = buffer.get_inner_values(raster, area).strip()
     
     # Write values
     output_str = file.name + " " + aod_str + "\n"

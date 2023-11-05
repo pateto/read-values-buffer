@@ -1,4 +1,5 @@
 import numpy as np
+import pdb
 
 class Buffer:
 
@@ -22,7 +23,7 @@ class Buffer:
         return dist
 
     # Get values inside the buffer
-    def get_inner_values(self, raster):
+    def get_inner_values(self, raster, area):
     
         output_str = ""
         
@@ -32,14 +33,17 @@ class Buffer:
                 # Get x, y point (in the middle of the cell)
                 x = raster.x_origin + i * raster.pixel_size_x + raster.pixel_size_x/2
                 y = raster.y_origin + j * raster.pixel_size_y + raster.pixel_size_y/2
+
+                # Is the point inside the influence area polygon?                
+                if area.contains(x, y):
                 
-                # Is the point inside the rectangle? (surrounding the circle)
-                if abs(x - self.center_x) < self.radius and abs(y - self.center_y) < self.radius:
-                
-                    # is the point inside the circle?
-                    if self.distance(self.center_x, self.center_y, x, y) < self.radius:
-                        if raster.arr[j, i] != -9999:
-                            #print(i,j, x, y, raster.arr[j, i])
-                            output_str += " " + str(raster.arr[j, i])
+                    # Is the point inside the rectangle? (surrounding the circle)
+                    if abs(x - self.center_x) < self.radius and abs(y - self.center_y) < self.radius:
+                    
+                        # is the point inside the circle?
+                        if self.distance(self.center_x, self.center_y, x, y) < self.radius:
+                            if raster.arr[j, i] != -9999:
+                                #print(i,j, x, y, raster.arr[j, i])
+                                output_str += " " + str(raster.arr[j, i])
         
         return output_str
